@@ -24,5 +24,7 @@ describe('Basic Reddit', function () {
     expect($p).to.deep.eq("http://localhost:4536/"+DEFAULT_IMG_URL)
   })
     cy.get("#currentImg").should('have.attr','src',DEFAULT_IMG_URL)
+    cy.get("#labelAnnotations").should('be.visible')
+    cy.get("#labelAnnotations > span").contains(".+")
   })
 })

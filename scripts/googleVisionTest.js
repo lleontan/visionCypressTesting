@@ -1,12 +1,11 @@
 /* Sends images to an api to be processed and displays the results on the webpage.
-  EXTERNAL JS IS CURRENTLY BROKEN ON THE SERVER.
-  WRITE CODE IN THIS FILE AND PASTE INTO html.
  */
 "use strict";
 (function () {
   const DEFAULT_IMG_URL = "omnafield.png"; //Default image for testing.
   const DEFAULT_API_URL = "http://localhost:4536/";
-  /*Reads a file from the element converts it to a base64String and returns the result.
+
+  /** Reads a file from the element converts it to a base64String and returns the result.
   @param {file} file - The file to encode.
   @return {string} - file as a base64String
    */
@@ -14,11 +13,13 @@
     let reader = new FileReader();
     reader.onloadend = function (e) {
       document.getElementById("currentImg").src = e.target.result;
-      sendImageAsString(reader.result, onLabelDetectionReply);
+      sendImageAsString(reader.result, onLabelDetectionReply, "labels");
     }
     reader.readAsDataURL(file);
   }
 
+  /** Changes the preview image to the file loaded in the file select input.
+  */
   function changeImagePreview() {
     let reader = new FileReader();
     reader.onload = function (e) {
@@ -27,11 +28,13 @@
     reader.readAsDataURL(document.getElementById("picUpload").files[0]);
   }
 
-  function sendImageAsString(result, onReplyFunction) {
-    //let packageForm=new FormData();
+  /**
+  */
+  function sendImageAsString(result, onReplyFunction, apiMode) {
     document.getElementById("labelAnnotations").classList.add("hidden");
+    document.getElementById("textOutput").innerText="Loading";
     let packageBody = {
-      mode: "labels",
+      mode: apiMode,
       image: result
     };
     makeImagePost(onReplyFunction, packageBody);
@@ -68,7 +71,16 @@
     fetch(DEFAULT_API_URL + urlSuffix, params)
       .then(checkStatus)
       .then(callFunction)
-      .catch(errorMessage);
+      .catch(onCatchError)
+  }
+  /* Resets loading messages when a query is finished
+  */
+  function onVisionRequestLoaded(){
+    document.getElementById("textOutput").innerText="Results";
+  }
+  function onCatchError(statusMessage){
+    onVisionRequestLoaded();
+    errorMessage(statusMessage);
   }
 
   /*Tells the user that an error has occured with a fetch request through the console.
@@ -82,6 +94,8 @@
   @param {object} response - Response from server
   @return {string} - The server's response. */
   function checkStatus(response) {
+    onVisionRequestLoaded();
+    //console.log(response.text());
     if (response.status >= 200 && response.status < 300) {
       return response.text();
     } else {
@@ -95,25 +109,29 @@
   }
 
   function onLabelDetectionReply(str) {
-    let jsonData = JSON.parse(str);     //For whatever reason it gets sent a
+    console.log(str);
+    let jsonData = JSON.parse(str);
     console.log(jsonData);
     let outputParagraph = document.getElementById("textOutput");
     let responses=jsonData['responses'];
     console.log(responses);
-    let labelAnnotations=responses[0]['labelAnnotations'];
+    let labelAnnotations=responses[0]['labelAnnotations'][0];
     document.getElementById("labelAnnotations").classList.remove("hidden");
-
-    outputParagraph.innerText = str;
+    document.getElementById("description").innerText=labelAnnotations['description'];
+    document.getElementById("mid").innerText=labelAnnotations['mid'];
+    document.getElementById("score").innerText=labelAnnotations['score'];
+    document.getElementById("topicality").innerText=labelAnnotations['topicality'];
+    //outputParagraph.innerText = str;
 
   }
 
-  function toDataURL(src, callback, callbacksCallback) {
+  function toDataURL(src, callback, callbacksCallback, apiMode) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onload = function () {
       let fileReader = new FileReader();
       fileReader.onloadend = function () {
-        callback(fileReader.result, callbacksCallback);
+        callback(fileReader.result, callbacksCallback, apiMode);
       }
       fileReader.readAsDataURL(xhttp.response);
     };
@@ -126,7 +144,7 @@
   window.onload = function () {
     document.getElementById("defaultImageSubmit").onclick = function () {
       document.getElementById("currentImg").src = DEFAULT_IMG_URL;
-      toDataURL(DEFAULT_IMG_URL, sendImageAsString, onLabelDetectionReply);
+      toDataURL(DEFAULT_IMG_URL, sendImageAsString, onLabelDetectionReply, "labels");
     }
     document.getElementById("picUpload").onchange = function (e) {
       changeImagePreview();
