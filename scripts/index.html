@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<!--
+This file displays a basic interface to test google calls.
+Takes a image file as input and gets basic data from the server
+webBrickServer runs on http://localhost:4536/
+-->
+
+<head>
+  <title>Google Vision Test</title>
+  <link href="scripts/visionDesign.css"
+    type="text/css"
+    rel="stylesheet">
+  <script type="text/javascript"
+    src="scripts/googleVisionTest.js"></script>
+</head>
+
+<body>
+  <p>Input a image to get data about it from google vision</p>
+  <input type="file"
+    id="picUpload"
+    name="picUpload"
+    accept="image/*">
+  <button id="submitButton">submit</button>
+  <button id="defaultImageSubmit">defaultImage</button>
+  <div id="results">
+    <img id="currentImg"
+      src="omnafield.png"></img>
+    <p id="textOutput">Results here</p>
+    <div id="labelAnnotations"
+      class="hidden">
+      <ul>
+        <li>description:
+          <span id="description"></span>
+        </li>
+        <li>mid:
+          <span id="mid"></span>
+        </li>
+        <li>score:
+          <span id="score"></span>
+        </li>
+        <li>topicality:
+          <span id="topicality"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>
