@@ -1,6 +1,8 @@
 # Hosts a webpage that indentifies details about submitted images.
 # Hosts a POST server that takes images and returns details about them from google images.
 # server runs on http://localhost:4536/
+# Vision api endpoint is "/vision"
+# Http Server endpoint is "/"
 require 'socket'
 require 'net/http'
 require 'net/https'
@@ -47,9 +49,7 @@ def ServeFile(_request, _response)
   end
 end
 class HtmlServlet < WEBrick::HTTPServlet::AbstractServlet
-  def do_GET(_request, _response)
-    # method, path = _request.split(" ")
-    # puts "path is #{path}"
+  def do_GET(_request, _response)\
     ServeFile(_request, _response)
   end
 end
@@ -63,6 +63,12 @@ class VisionServlet < WEBrick::HTTPServlet::AbstractServlet
     queryLabels(_request, _response,image) if mode == 'labels'
   end
 end
+
+#Calls the google cloud API to get labels of the image.
+#responds to the post request with the response json.
+# _request - webrick request object.
+# _response - webrick response object.
+# image - base64 string of the image
 def queryLabels(_request, _response,image)
   call_features=[{
     type: 'LABEL_DETECTION',
@@ -77,13 +83,11 @@ end
 #{string} image_string: image encoded as a base64 String.
 #returns {json string}:See https://cloud.google.com/vision/docs/request for details
 def apiRequest(base_string,call_features)
-  #uri = URI.parse(VISION_URL)
   uri = URI.parse(VISION_URL)
   #image string may be of format data:image/png;base64,#{base64_string}
   image_string=base_string
   if base_string.start_with?("data:image/png;base64,")
     image_string=base_string["data:image/png;base64,".length..base_string.length]
-    puts "NEW_IMAGE_STRING"
   end
   post_body={
     "requests":[
@@ -95,17 +99,12 @@ def apiRequest(base_string,call_features)
       }
     ]
   }
-  header = {'Content-Type' =>'application/json'}#,
-      #'Access-Control-Allow-Origin'=> "*",
-      #'Access-Control-Allow-Headers'=> "*"
-    #}
+  header = {'Content-Type' =>'application/json'}
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
   request = Net::HTTP::Post.new(uri.request_uri, header)
   request.body = post_body.to_json
-  puts "BEGINNING OF RESP #{request}"
   response = http.request(request)
-  puts "END OF query #{response}...."
   response
 end
 

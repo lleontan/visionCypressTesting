@@ -27,4 +27,8 @@ describe('Basic Reddit', function () {
     cy.get("#labelAnnotations").should('be.visible')
     cy.get("#labelAnnotations span").contains(/.+/)
   })
+  it("Submit button displays error when no file is selected", function () {
+    cy.get("#submitButton").click()
+    cy.get("#textOutput").contains("Error")
+  })
 })

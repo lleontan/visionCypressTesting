@@ -1,4 +1,4 @@
-#this file is terribly written.
+#this file is terrible.
 #use webBrickServer.rb instead.
 #if you're going to keep working on this server double check the paths.
 
@@ -21,6 +21,8 @@ require 'launchy'
 
 #Takes a base64String of a image and returns details from google vision.
 #{string} image_string: image encoded as a base64 String.
+#{Hash} call_features: type of action to preform. See
+#https://cloud.google.com/vision/docs/request for details.
 #returns {json string}:See https://cloud.google.com/vision/docs/request for details
 def apiRequest(image_string,call_features)
   uri = URI.parse("https://vision.googleapis.com/v1/images:annotate
