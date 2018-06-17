@@ -25,6 +25,6 @@ describe('Basic Reddit', function () {
   })
     cy.get("#currentImg").should('have.attr','src',DEFAULT_IMG_URL)
     cy.get("#labelAnnotations").should('be.visible')
-    cy.get("#labelAnnotations > span").contains(".+")
+    cy.get("#labelAnnotations span").contains(/.+/)
   })
 })
