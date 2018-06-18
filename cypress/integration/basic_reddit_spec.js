@@ -5,7 +5,7 @@ describe('Basic Reddit', function () {
     cy.get("a.bylink.comments.may-blank").then((linksElements) => {
       return linksElements.first();
     }).click()
-    cy.url().should('include', 'old.reddit.com/r/worldnews/comments/')
+    cy.url().should('include', '/comments/')
   })
   it('Check sorting button visibility', function () {
     cy.visit('www.old.reddit.com/r/worldnews')
