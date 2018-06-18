@@ -1,7 +1,52 @@
 img{
-  width:30%;
-  height:30%;
+  width:200px;
+  height:200px;
+  align-self: center;
 }
 .hidden{
   visibility: hidden;
+}
+body{
+  font-family: sans-serif;
+}
+header{
+  align-items: center;
+}
+header,#inputsDiv,main,#inputsDiv>div{
+  display:flex;
+}
+main{
+  flex-direction: row;
+}
+header,#inputsDiv,#fileInputDiv{
+  flex-direction: column;
+}
+#inputsDiv{
+  justify-content: space-around;
+}
+main{
+  align-items: flex-start;
+}
+img,main > div,input,button,#visionOptions{
+  margin:2%;
+}
+#visionOptions{
+  flex-basis: 30%;
+}
+#picUpload{
+  margin-right: 2px;
+}
+#inputsDiv,#results{
+  border-width: 2px;
+  border-color: black;
+  border-style: solid;
+}
+#fileInputDiv{
+  flex-wrap: wrap;
+}
+#inputsDiv>div,#fileInputDiv{
+  flex-direction: row;
+}
+#results{
+  margin-left: 1%;
 }

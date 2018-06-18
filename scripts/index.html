@@ -8,43 +8,67 @@ webBrickServer runs on http://localhost:4536/
 
 <head>
   <title>Google Vision Test</title>
-  <link href="scripts/visionDesign.css"
+  <link href="visionDesign.css"
     type="text/css"
     rel="stylesheet">
   <script type="text/javascript"
-    src="scripts/googleVisionTest.js"></script>
+    src="googleVisionTest.js"></script>
 </head>
 
 <body>
-  <p>Input a image to get data about it from google vision</p>
-  <input type="file"
-    id="picUpload"
-    name="picUpload"
-    accept="image/*">
-  <button id="submitButton">submit</button>
-  <button id="defaultImageSubmit">defaultImage</button>
-  <div id="results">
-    <img id="currentImg"
-      src="omnafield.png"></img>
-    <p id="textOutput">Results</p>
-    <div id="labelAnnotations"
-      class="hidden">
-      <ul>
-        <li>description:
-          <span id="description"></span>
-        </li>
-        <li>mid:
-          <span id="mid"></span>
-        </li>
-        <li>score:
-          <span id="score"></span>
-        </li>
-        <li>topicality:
-          <span id="topicality"></span>
-        </li>
-      </ul>
+  <header>
+    <h1>Google Vision Api Tester</h1>
+    <p>Input a image to get data about it from google vision</p>
+  </header>
+  <main>
+    <div id="inputsDiv">
+      <div>
+        <div id="fileInputDiv">
+          <input type="file"
+            id="picUpload"
+            name="picUpload"
+            accept="image/*">
+          <br>
+          <button id="submitButton">submit file</button>
+          <button id="defaultImageSubmit">Submit Default Image</button>
+        </div>
+        <div id="urlSubmitDiv">
+          <input type="text"
+            id="urlInput"
+            placeholder="url"
+            maxlength="150">
+          <button id="urlSubmitButton">Submit Image URL</button>
+        </div>
+        <div id="visionOptions">
+          Mode
+          <select id="modeSelect">
+          <option>labels</option>
+        </select>
+        </div>
+      </div>
+      <img id="currentImg"
+        src="omnafield.png"></img>
     </div>
-  </div>
+    <div id="results">
+      <p id="textOutput">Results</p>
+      <div id="labelAnnotations"
+        class="hidden">
+        <ul>
+          <li>description:
+            <span id="description"></span>
+          </li>
+          <li>mid:
+            <span id="mid"></span>
+          </li>
+          <li>score:
+            <span id="score"></span>
+          </li>
+          <li>topicality:
+            <span id="topicality"></span>
+          </li>
+        </ul>
+      </div>
+  </main>
 </body>
 
 </html>

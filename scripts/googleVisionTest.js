@@ -2,6 +2,9 @@
  */
 "use strict";
 (function () {
+  const API_CALLBACKS = {
+    "labels": onLabelDetectionReply,
+  };
   const DEFAULT_IMG_URL = "omnafield.png"; //Default image url for testing.
   const DEFAULT_API_URL = "http://localhost:4536/";
 
@@ -13,7 +16,7 @@
     let reader = new FileReader();
     reader.onloadend = function (e) {
       document.getElementById("currentImg").src = e.target.result;
-      sendImageAsString(reader.result, onLabelDetectionReply, "labels");
+      sendImageAsString(reader.result);
     }
     reader.readAsDataURL(file);
   }
@@ -33,7 +36,9 @@
   @param {function} onReplyFunction- Callback when replied to successfully.
   @param {string} apiMode- vision call mode.
   */
-  function sendImageAsString(result, onReplyFunction, apiMode) {
+  function sendImageAsString(result) {
+    let mode = document.getElementById("modeSelect").value;
+    let onReplyFunction = API_CALLBACKS[mode];
     document.getElementById("labelAnnotations").classList.add("hidden");
     document.getElementById("textOutput").innerText = "Loading";
     let packageBody = {
@@ -109,17 +114,17 @@
    */
   function submitImage() {
     let image = document.querySelector('input[type=file]').files[0];
-    if (image){
+    if (image) {
       encodeImageFileAsURL(image);
-    }else{
+    } else {
       errorMessage("No Selected File");
     }
   }
 
-/**Prints the results of a label detection fetch to the output.
-  Reveals the output.
-  @param {string} str-unparsed json string of the response from the api.
- */
+  /**Prints the results of a label detection fetch to the output.
+    Reveals the output.
+    @param {string} str-unparsed json string of the response from the api.
+   */
   function onLabelDetectionReply(str) {
     let jsonData = JSON.parse(str);
     let outputParagraph = document.getElementById("textOutput");
@@ -136,19 +141,17 @@
 
   }
 
-  /** Converts a local url to a base64string
+  /** Converts a local url to a base64string and submits it as a parameter to a callback.
   @param {string} src-url of image, must be local.
   @param {function} callback-function to call onloadend.
-  @param {function} callbacksCallback-function to pass to callback.
-  @param {string} apiMode-string of apiMode to pass to callback.
   */
-  function toDataURL(src, callback, callbacksCallback, apiMode) {
+  function toDataURL(src, callback) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onload = function () {
       let fileReader = new FileReader();
       fileReader.onloadend = function () {
-        callback(fileReader.result, callbacksCallback, apiMode);
+        callback(fileReader.result);
       }
       fileReader.readAsDataURL(xhttp.response);
     };
@@ -157,14 +160,28 @@
     xhttp.open('GET', src, true);
     xhttp.send();
   }
-
-  /** On load sets onclick handlers and onchange handlers.
+  /**Reads the url from #urlInput, checks for validity and submits the image.
+  WARNING ONLY WORKS FOR LOCAL URLS AT THE MOMENT, NEEDS FIXING.
   */
+  function submitURL() {
+    let urlInput = document.getElementById("urlInput");
+    let url = urlInput.value;
+    let urlRegex = "^.+\.(png|jpg)$";
+    let regexResults = DEFAULT_IMG_URL;// WARNING REMOVE THIS:REPLACE WITH REGEX FUNCTION WHEN INTERNET ACCESS ACHEIVED
+    if (true) {
+      //REPLACE THIS WITH THE REGEX FUNCTION
+      toDataURL(url, sendImageAsString);
+    } else {
+      urlInput.value = "";
+      errorMessage("Invalid URL " + regexResults);
+    }
+  }
+  /** On load sets onclick handlers and onchange handlers.
+   */
   window.onload = function () {
     document.getElementById("defaultImageSubmit").onclick = function () {
       document.getElementById("currentImg").src = DEFAULT_IMG_URL;
-      toDataURL(DEFAULT_IMG_URL, sendImageAsString, onLabelDetectionReply,
-        "labels");
+      toDataURL(DEFAULT_IMG_URL, sendImageAsString);
     }
     document.getElementById("picUpload").onchange = function (e) {
       changeImagePreview();
@@ -174,5 +191,13 @@
       event.preventDefault();
       submitImage();
     });
+    document.getElementById("urlSubmitButton").onclick = submitURL;
+    let modeSelect = document.querySelector("#modeSelect");
+    modeSelect.innerHTML="";
+    for (let key in API_CALLBACKS) {
+      let newOption = document.createElement("option");
+      newOption.innerText = key;
+      modeSelect.appendChild(newOption);
+    }
   }
 })();

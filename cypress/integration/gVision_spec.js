@@ -3,14 +3,14 @@
 */
 const DEFAULT_IMG_URL = "omnafield.png"; //Default image for testing.
 
-describe('Basic Reddit', function () {
+describe('Google Vision Tester', function () {
   it('Check the default image button', function () {
     cy.server()
     cy.visit("http://localhost:4536/")
     cy.route('GET', '/omnafield.png').as('defaultImgRoute') //aliased as @visionRoute
     cy.route('POST', '/vision').as('visionEndpoint') //aliased as @visionRoute
 
-    cy.contains("button", "defaultImage").click()
+    cy.get("#defaultImageSubmit").click()
     cy.wait('@defaultImgRoute').then(function (xhr) {
         //cy.log(str)
         return xhr.url
@@ -25,7 +25,7 @@ describe('Basic Reddit', function () {
         cy.log($p)
         expect($p).to.deep.eq("http://localhost:4536/" + DEFAULT_IMG_URL)
       })
-      //WARNING:Post request for submitting images is not seen by cypress
+      //WARNING:Post request to /vision is not seen by cypress
       .get("#currentImg").should('have.attr', 'src', DEFAULT_IMG_URL)
     cy.get("#labelAnnotations").should('be.visible')
     cy.get("#labelAnnotations span").contains(/.+/)
