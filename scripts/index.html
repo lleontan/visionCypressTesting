@@ -32,7 +32,8 @@ webBrickServer runs on http://localhost:4536/
           <button id="submitButton">submit file</button>
           <button id="defaultImageSubmit">Submit Default Image</button>
         </div>
-        <div id="urlSubmitDiv">
+        <div id="urlSubmitDiv"
+          class="hidden">
           <input type="text"
             id="urlInput"
             placeholder="url"
@@ -51,6 +52,7 @@ webBrickServer runs on http://localhost:4536/
     </div>
     <div id="results">
       <p id="textOutput">Results</p>
+      <div id="jsonStringOutput"></div>
       <div id="labelAnnotations"
         class="hidden">
         <ul>

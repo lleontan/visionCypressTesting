@@ -10,7 +10,7 @@ require 'uri'
 require 'webrick'
 require 'launchy'
 require 'json'
-
+require 'open-uri'
 
 DEFAULT_PORT = 4536
 DEFAULT_HTML_PATH = 'index.html'.freeze
@@ -40,6 +40,14 @@ def ServeFile(_request, _response)
       _response['Content-Type'] = contentType
       _response.body = File.open(path, &:read)
     end
+=begin
+  elsif path.include? "www."
+    open(path) do |_file|
+      _response.status = 200
+      _response['Content-Type'] = contentType
+      _response.body = open(path, &:read)
+    end
+=end
   else
     File.open(DEFAULT_HTML_PATH, 'rb') do |_file|
       _response.status = 200
@@ -60,7 +68,11 @@ class VisionServlet < WEBrick::HTTPServlet::AbstractServlet
     image=bodyObj['image']
     mode=bodyObj['mode']
     puts "VISION SERVLET MODE #{mode}"
-    queryLabels(_request, _response,image) if mode == 'labels'
+    if mode == 'labels'
+       queryLabels(_request, _response,image)
+    elsif mode == 'TEXT_DETECTION'
+      queryText(_request, _response,image)
+    end
   end
 end
 
@@ -72,6 +84,21 @@ end
 def queryLabels(_request, _response,image)
   call_features=[{
     type: 'LABEL_DETECTION',
+    maxResults: 1
+  }]
+  results=apiRequest(image,call_features)
+  _response.status = 200
+  _response['Content-Type'] = 'application/json'
+  _response.body=results.body
+end
+#Calls the google cloud API to get text of the image.
+#responds to the post request with the response json.
+# _request - webrick request object.
+# _response - webrick response object.
+# image - base64 string of the image
+def queryText(_request, _response,image)
+  call_features=[{
+    type: 'TEXT_DETECTION',
     maxResults: 1
   }]
   results=apiRequest(image,call_features)

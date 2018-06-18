@@ -3,11 +3,24 @@
 "use strict";
 (function () {
   const API_CALLBACKS = {
-    "labels": onLabelDetectionReply,
+    "Labels": {
+      mode: "labels",
+      callback: onLabelDetectionReply
+    },
+    "Text Detection": {
+      mode: "TEXT_DETECTION",
+      callback: onTextDetectionReply
+    }
   };
+
   const DEFAULT_IMG_URL = "omnafield.png"; //Default image url for testing.
   const DEFAULT_API_URL = "http://localhost:4536/";
 
+  function onTextDetectionReply(jsonStr) {
+    let jsonData = jsonStr;
+    document.getElementById("jsonStringOutput").innerHTML = JSON.stringify(
+      jsonData, undefined, 2);
+  }
   /** Reads a file from the element converts it to a base64String and returns the result.
   @param {file} file - The file to encode.
   @return {string} - file as a base64String
@@ -37,12 +50,12 @@
   @param {string} apiMode- vision call mode.
   */
   function sendImageAsString(result) {
-    let mode = document.getElementById("modeSelect").value;
-    let onReplyFunction = API_CALLBACKS[mode];
+    let modeName = document.getElementById("modeSelect").value;
+    let onReplyFunction = API_CALLBACKS[modeName].callback;
     document.getElementById("labelAnnotations").classList.add("hidden");
     document.getElementById("textOutput").innerText = "Loading";
     let packageBody = {
-      mode: apiMode,
+      mode: API_CALLBACKS[modeName].mode,
       image: result
     };
     makeImagePost(onReplyFunction, packageBody);
@@ -166,10 +179,9 @@
   function submitURL() {
     let urlInput = document.getElementById("urlInput");
     let url = urlInput.value;
-    let urlRegex = "^.+\.(png|jpg)$";
-    let regexResults = DEFAULT_IMG_URL;// WARNING REMOVE THIS:REPLACE WITH REGEX FUNCTION WHEN INTERNET ACCESS ACHEIVED
-    if (true) {
-      //REPLACE THIS WITH THE REGEX FUNCTION
+    let urlRegex = /^.+\.(png|jpg)$/;
+    let regexResults = url.match(urlRegex);
+    if (regexResults.length == 1) {
       toDataURL(url, sendImageAsString);
     } else {
       urlInput.value = "";
@@ -193,7 +205,7 @@
     });
     document.getElementById("urlSubmitButton").onclick = submitURL;
     let modeSelect = document.querySelector("#modeSelect");
-    modeSelect.innerHTML="";
+    modeSelect.innerHTML = "";
     for (let key in API_CALLBACKS) {
       let newOption = document.createElement("option");
       newOption.innerText = key;

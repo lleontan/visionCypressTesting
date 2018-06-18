@@ -1,52 +1,70 @@
-img{
-  width:200px;
-  height:200px;
+img {
+  width: 200px;
+  height: 200px;
   align-self: center;
 }
-.hidden{
+
+.hidden {
   visibility: hidden;
 }
-body{
+
+body {
   font-family: sans-serif;
 }
-header{
+
+header {
   align-items: center;
 }
-header,#inputsDiv,main,#inputsDiv>div{
-  display:flex;
+
+header, #inputsDiv, main, #inputsDiv>div {
+  display: flex;
 }
-main{
+
+main {
   flex-direction: row;
 }
-header,#inputsDiv,#fileInputDiv{
+
+header, #inputsDiv, #fileInputDiv {
   flex-direction: column;
 }
-#inputsDiv{
+
+#inputsDiv {
   justify-content: space-around;
 }
-main{
+
+main {
   align-items: flex-start;
 }
-img,main > div,input,button,#visionOptions{
-  margin:2%;
+
+img, main>div, input, button, #visionOptions {
+  margin: 2%;
 }
-#visionOptions{
+
+#visionOptions {
   flex-basis: 30%;
 }
-#picUpload{
+
+#picUpload {
   margin-right: 2px;
 }
-#inputsDiv,#results{
+
+#inputsDiv, #results {
   border-width: 2px;
   border-color: black;
   border-style: solid;
 }
-#fileInputDiv{
+
+#fileInputDiv {
   flex-wrap: wrap;
 }
-#inputsDiv>div,#fileInputDiv{
+
+#inputsDiv>div, #fileInputDiv {
   flex-direction: row;
 }
-#results{
+
+#results {
   margin-left: 1%;
+  overflow: scroll;
+  flex-basis: 30%;
+  height: 400px;
 }
